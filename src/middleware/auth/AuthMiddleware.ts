@@ -19,9 +19,10 @@ export const AuthMiddleware: RouteMiddleware = {
 
     const authHeader = req.headers['authorization'];
     const token = authHeader?.replace(/^Bearer /, '');
-    try {
 
+    try {
       const tokenPayload: UserTokenPayload = jwt.verify(token, AuthConfig.jwtSecret) as any;
+      AuthMiddleware.server?.users().byUsername(tokenPayload.username);
 
     } catch (err) {
       LogAndFail({

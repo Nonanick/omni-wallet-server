@@ -48,15 +48,15 @@ export class ExpressControllerManager {
 
     // Add Controller middlewares
     controler.middlewares.forEach((middleware) => {
-      middleware.useServer = this._server;
-      server.use(routeURL, middleware.middlewareFunction.bind(middleware));
+      middleware.server = this._server;
+      server.use(routeURL, middleware.middlewareFunction);
     });
 
     // Add Exposed methods middlewares
     if (exposedMethod.useMiddlewares) {
       exposedMethod.useMiddlewares.forEach((middleware) => {
-        middleware.useServer = this._server;
-        server.use(routeURL, middleware.middlewareFunction.bind(middleware));
+        middleware.server = this._server;
+        server.use(routeURL, middleware.middlewareFunction);
       });
     }
 

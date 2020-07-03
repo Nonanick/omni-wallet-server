@@ -1,3 +1,3 @@
-export interface IAutenticacao {
+export interface IAuthentication {
 
 }

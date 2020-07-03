@@ -1,11 +1,21 @@
 import { EventEmitter } from 'events';
-import { Usuario } from '../Usuario.js';
+import { Server } from '../../Server.js';
+import { User } from '../User.js';
 
-export class RepositorioUsuarios extends EventEmitter {
-  private _usuariosLogados: Map<string, Usuario>;
+export class UserRepository extends EventEmitter {
 
-  constructor() {
+  private _loggedUsers: Map<string, User>;
+
+  private _server: Server;
+
+  constructor(server: Server) {
     super();
-    this._usuariosLogados = new Map();
+    this._server = server;
+    this._loggedUsers = new Map();
   }
+
+  public byUsername(username: string) {
+
+  }
+
 }

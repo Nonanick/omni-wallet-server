@@ -13,6 +13,7 @@ export class Model {
     constructor(fromTable, user) {
         this._changedColumns = [];
         this._modelInnerState = 'NOT_ON_DATABASE';
+        this._saveSolutions = {};
         this.values = {};
         this.primaryField = '_id';
         this.columns = {};
@@ -47,6 +48,7 @@ export class Model {
         });
     }
     set(propOrObject, value) {
+        // Redirect to always use {}
         if (typeof propOrObject === "string") {
             const key = propOrObject;
             return this.set(({
@@ -77,6 +79,18 @@ export class Model {
                 .from(this.tableName)
                 .where(searchByColumn !== null && searchByColumn !== void 0 ? searchByColumn : this.primaryField, id);
             yield this.applyReadConstraints(read);
+            read.then((search) => {
+                if (search.length == 1) {
+                    this.set(search[0]);
+                    this._modelInnerState = 'SYNCHRONIZED';
+                }
+                else {
+                    throw new Error(`Falha ao localizar registro com o identificador ${id}, valor procurado na coluna ${searchByColumn !== null && searchByColumn !== void 0 ? searchByColumn : this.primaryField}`);
+                }
+            })
+                .catch((err) => {
+                throw new Error(`Falha ao requisitar registro para o banco! ${err}`);
+            });
         });
     }
     applyReadConstraints(query) {
@@ -93,5 +107,18 @@ export class Model {
                 this._changedColumns.push(columnName);
             }
         }
+    }
+    save() {
+        return __awaiter(this, void 0, void 0, function* () {
+            // Synchronized == do nothing
+            if (this._modelInnerState === 'SYNCHRONIZED')
+                return;
+            if (this._saveSolutions[this._modelInnerState] != null) {
+            }
+        });
+    }
+    forceSave() {
+        return __awaiter(this, void 0, void 0, function* () {
+        });
     }
 }

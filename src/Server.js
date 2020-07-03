@@ -14,12 +14,17 @@ import { WinstonLogger } from './logger/WinstonLogger.js';
 import { UsuarioController } from './controllers/usuario/UsuarioController.js';
 import { EmpresaController } from './controllers/empresa/EmpresaController.js';
 import { AuthController } from './controllers/auth/AuthController.js';
+import { UserRepository } from './user/repository/UserRepository.js';
 export class Server extends EventEmitter {
     constructor() {
         super();
         this._controllers = {};
         this._boot = new BootSequence();
+        this._userRepo = new UserRepository(this);
         this.addController(new UsuarioController(), new EmpresaController(), new AuthController());
+    }
+    users() {
+        return this._userRepo;
     }
     addController(...controllers) {
         for (const controller of controllers) {
