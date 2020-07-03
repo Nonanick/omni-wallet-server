@@ -3,8 +3,8 @@ import { ColumnMetadata } from './columnMetadata/ColumnMetadata.js';
 import { WinstonLogger } from '../logger/WinstonLogger.js';
 import { DbConnection } from '../database/DbConnection.js';
 import { ReadConstraintProvider } from './readConstraint/ReadConstraintProvider.js';
-import { Usuario } from '../usuario/Usuario.js';
 import { SaveSolution } from './save/SaveSolution.js';
+import { User } from '../user/User.js';
 
 export class Model<T = any> {
 
@@ -28,7 +28,7 @@ export class Model<T = any> {
 
   public readConstraints: ReadConstraintProvider[] = [];
 
-  constructor(fromTable: string, user?: Usuario) {
+  constructor(fromTable: string, user?: User) {
     this.tableName = fromTable;
   }
 

@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 
-export class Usuario extends EventEmitter {
+export class User extends EventEmitter {
   protected _username: string;
 
   protected _email!: string;

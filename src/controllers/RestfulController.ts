@@ -1,11 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
 import { IRouteController } from './IRouteController.js';
 import { RouteExposedMethods } from './IExposedMethods.js';
+import { AuthMiddleware } from '../middleware/auth/AuthMiddleware.js';
+import { RouteMiddleware } from '../middleware/RouteMiddleware.js';
 
 export abstract class RestfulController implements IRouteController {
 
   public abstract get baseUrl(): string;
   public readonly isRestful: boolean = true;
+
+  public readonly middlewares: RouteMiddleware[] = [
+    AuthMiddleware
+  ];
 
   public exposedMethods(): RouteExposedMethods {
     return [
@@ -17,22 +23,22 @@ export abstract class RestfulController implements IRouteController {
       {
         functionName: "create",
         url: '',
-        httpMethods: ["POST"]
+        httpMethods: ["POST"],
       },
       {
         functionName: 'show',
         url: ':id',
-        httpMethods: ['GET']
+        httpMethods: ['GET'],
       },
       {
         functionName: 'update',
         url: ':id',
-        httpMethods: ['PUT']
+        httpMethods: ['PUT'],
       },
       {
         functionName: 'destroy',
         url: ':id',
-        httpMethods: ['DELETE']
+        httpMethods: ['DELETE'],
       }
     ];
   }
