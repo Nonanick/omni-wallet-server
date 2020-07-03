@@ -1,6 +1,6 @@
 import { LoginAttempt, LoginAttempIdentification } from "./LoginAttempt.js";
 import { Request } from 'express';
-import * as useragent from 'useragent';
+import Useragent from 'useragent';
 
 export class LoginAttemptManager {
 
@@ -53,7 +53,7 @@ export class LoginAttemptManager {
    */
   public requestLoginAttempt(request: Request): LoginAttempt {
 
-    let reqId: LoginAttempIdentification = useragent.lookup(request.headers['user-agent'] ?? 'UA_NOT_DEFINED');
+    let reqId: LoginAttempIdentification = Useragent.lookup(request.headers['user-agent'] ?? 'UA_NOT_DEFINED');
 
     let username = request.body.username;
 
@@ -83,7 +83,7 @@ export class LoginAttemptManager {
   } {
 
     let username: string = request.body.username;
-    const uaId = useragent.lookup(request.headers['user-agent'] ?? 'UA_NOT_DEFINED');;
+    const uaId = Useragent.lookup(request.headers['user-agent'] ?? 'UA_NOT_DEFINED');;
     let id: string = this.getStringFromIdentification(uaId);
 
     let usernameAttempts = this.attemptsPerUsername.get(username)!;
@@ -228,7 +228,7 @@ export class LoginAttemptManager {
    */
   private createLoginAttempt(request: Request): LoginAttempt {
 
-    const uaID = useragent.lookup(request.headers['user-agent'] ?? 'UA_NOT_DEFINED');
+    const uaID = Useragent.lookup(request.headers['user-agent'] ?? 'UA_NOT_DEFINED');
     let attempt: LoginAttempt = {
       attemptIdentification: uaID,
       timestamp: new Date(),

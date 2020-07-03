@@ -5,7 +5,7 @@ import { RouteMiddleware } from '../../middleware/RouteMiddleware.js';
 import { LoginAttemptManager } from './loginAttempt/LoginAttemptManager.js';
 import { LogAndFail } from '../../logger/LogAndFail.js';
 import { UserCredentials } from '../../user/authentication/UserCredentials.js';
-import * as useragent from 'useragent';
+import Useragent from 'useragent';
 
 export class AuthController implements IRouteController {
   public readonly baseUrl: string = 'auth';
@@ -17,7 +17,13 @@ export class AuthController implements IRouteController {
   private loginAttemptManager = new LoginAttemptManager();
 
   public exposedMethods(): RouteExposedMethods {
-    return [];
+    return [
+      {
+        functionName: "login",
+        url: "login",
+        httpMethods: ["POST"],
+      }
+    ];
   }
 
   public login: RoutedMethod = async (req, res, next) => {
@@ -32,7 +38,7 @@ export class AuthController implements IRouteController {
 
       if (hasValidCredentials) {
 
-        const { authToken, refreshToken } = await credentials.generateTokens(useragent.lookup(req.headers['user-agent'] ?? 'UA_NOT_DEFINED'));
+        const { authToken, refreshToken } = await credentials.generateTokens(Useragent.lookup(req.headers['user-agent'] ?? 'UA_NOT_DEFINED'));
 
         loginAttempt.success = true;
         this.loginAttemptManager.clearLoginAttempts(req);

@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { LoginAttemptManager } from './loginAttempt/LoginAttemptManager.js';
 import { LogAndFail } from '../../logger/LogAndFail.js';
 import { UserCredentials } from '../../user/authentication/UserCredentials.js';
-import * as useragent from 'useragent';
+import Useragent from 'useragent';
 export class AuthController {
     constructor() {
         this.baseUrl = 'auth';
@@ -26,7 +26,7 @@ export class AuthController {
                 const credentials = new UserCredentials(username, password);
                 const hasValidCredentials = yield credentials.validate();
                 if (hasValidCredentials) {
-                    const { authToken, refreshToken } = yield credentials.generateTokens(useragent.lookup((_a = req.headers['user-agent']) !== null && _a !== void 0 ? _a : 'UA_NOT_DEFINED'));
+                    const { authToken, refreshToken } = yield credentials.generateTokens(Useragent.lookup((_a = req.headers['user-agent']) !== null && _a !== void 0 ? _a : 'UA_NOT_DEFINED'));
                     loginAttempt.success = true;
                     this.loginAttemptManager.clearLoginAttempts(req);
                     res.json({
@@ -63,6 +63,12 @@ export class AuthController {
         };
     }
     exposedMethods() {
-        return [];
+        return [
+            {
+                functionName: "login",
+                url: "login",
+                httpMethods: ["POST"],
+            }
+        ];
     }
 }

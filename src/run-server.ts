@@ -4,6 +4,7 @@ import { ExpressAdapter } from './http/express/ExpressAdapter.js';
 const expressApp = express();
 const adaptadorExpress = new ExpressAdapter(expressApp);
 
-adaptadorExpress.boot().then(() => {
-  adaptadorExpress.start();
-});
+adaptadorExpress.boot()
+  .then(() => {
+    adaptadorExpress.start();
+  });

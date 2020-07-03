@@ -5,11 +5,11 @@ import { TableCatalog } from '../../database/CatalogoTabela.js';
 import { Agent } from 'useragent';
 import { RefreshTokenPayload } from './RefreshTokenPayload.js';
 import { nanoid } from 'nanoid';
-import * as jwt from 'jsonwebtoken';
 import { AuthConfig } from '../../config/AuthConfig.js';
 import { WinstonLogger } from '../../logger/WinstonLogger.js';
 import { UserTokenPayload } from './UserTokenPayload.js';
-import { Ref } from 'knex';
+import jsonwebtoken from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
 export class UserCredentials implements IAuthentication {
 
@@ -29,8 +29,8 @@ export class UserCredentials implements IAuthentication {
       .then((usuarios) => {
         if (usuarios.length != 1)
           return false;
-
-        return true;
+        const passwordMatch = bcrypt.compareSync(this._password, usuarios[0].senha);
+        return passwordMatch;
       });
   }
 
@@ -41,12 +41,12 @@ export class UserCredentials implements IAuthentication {
         if (foundRefToken == null) {
           return this.createRefreshTokenForDevice(device);
         }
-        return jwt.verify(foundRefToken, AuthConfig.tokenExpiration, { ignoreExpiration: true }) as RefreshTokenPayload;
+        return jsonwebtoken.verify(foundRefToken, AuthConfig.jwtSecret, { ignoreExpiration: true }) as RefreshTokenPayload;
       })
-      .then((refreshToken) => {
+      .then(async (refreshToken) => {
         return {
-          refreshToken: jwt.sign(refreshToken, AuthConfig.jwtSecret),
-          authToken: this.createAuthToken(refreshToken),
+          refreshToken: jsonwebtoken.sign(refreshToken, AuthConfig.jwtSecret),
+          authToken: await this.createAuthToken(refreshToken),
         };
       });
   }
@@ -61,14 +61,14 @@ export class UserCredentials implements IAuthentication {
       refresh_id: nanoid(22)
     };
 
-    const refreshToken = jwt.sign(payload, AuthConfig.jwtSecret);
+    const refreshToken = jsonwebtoken.sign(payload, AuthConfig.jwtSecret);
     try {
       await DbConnection
         .insert({
           _id: payload.id,
           usuario: this._username,
           token: refreshToken,
-          dispositivo: device,
+          dispositivo: deviceStr,
         })
         .into(TableCatalog.UsuarioRefreshToken);
     } catch (err) {
@@ -86,7 +86,7 @@ export class UserCredentials implements IAuthentication {
       token_id: refreshToken.id,
     };
 
-    return jwt.sign(authTokenPayload, AuthConfig.jwtSecret, {
+    return jsonwebtoken.sign(authTokenPayload, AuthConfig.jwtSecret, {
       expiresIn: AuthConfig.tokenExpiration
     });
 
